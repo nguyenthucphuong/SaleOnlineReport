@@ -1,0 +1,51 @@
+﻿@{
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+    var pageSize = (int)ViewBag.PageSize;
+    var search = (string)ViewBag.Search;
+    var actionName = (string)ViewBag.ActionName;
+}
+
+<div class="custom-pagination d-flex justify-content-between align-items-center">
+    <div>
+        <label for="pageSize" class="me-2" style="color: white;">Rows per page:</label>
+        <select id="pageSize" class="form-select form-select-sm">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="All">All</option>
+        </select>
+    </div>
+
+    @if (totalPages > 1)
+    {
+        var pagedListRenderOptions = new PagedListRenderOptions
+                {
+                    UlElementClasses = new[] { "pagination" },
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" }
+                };
+        var pagedList = new StaticPagedList<object>(Enumerable.Empty<object>(), currentPage, pageSize, 0);
+
+        @Html.PagedListPager(pagedList, page => Url.Action(actionName, new { page, pageSize, search }), pagedListRenderOptions)
+
+    }
+</div>
+
+<script>
+    var pageSize = '@pageSize';
+    if (pageSize === '2147483647') {
+        pageSize = 'All';
+    }
+    $('#pageSize').val(pageSize);
+    $('#pageSize').on('change', function () {
+        var pageSize = $(this).val();
+        if (pageSize === 'All') {
+            pageSize = 2147483647;
+        }
+        var url = '@Url.Action(actionName, new { page = 1, search })';
+        url += '&pageSize=' + pageSize;
+        window.location.href = url;
+    });
+</script>

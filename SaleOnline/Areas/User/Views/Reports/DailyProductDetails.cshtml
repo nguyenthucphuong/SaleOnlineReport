@@ -1,0 +1,57 @@
+﻿@model SaleOnline.Models.Order
+@{
+    ViewData["Title"] = "DailyProductDetails";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<h2>Báo cáo chi tiết mặt hàng bán trong ngày</h2>
+
+<form asp-action="DailyProductDetails" asp-controller="Reports" asp-area="User" method="get" class="form-inline">
+  <label for="birthday">Chọn ngày </label>
+    <input type="date" id="date" name="date" value="@ViewBag.SelectedDate">
+    <button type="submit" class="btn btn-primary ml-2">Xem kết quả</button>
+</form>
+
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        @if (Model != null && Model.OrderItems.Count == 0)
+        {
+            <caption class="text-center">
+                Không có dữ liệu
+            </caption>
+        }
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Hình ảnh</th>
+                <th class="text-center">Tên sản phẩm</th>
+                <th class="text-center">Số lượng</th>
+                <th class="text-center">Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null){
+                int i = 1;
+                foreach (var item in ViewBag.OrderDetails)
+                {
+                    <tr>
+                        <td class="text-center">@i</td>
+                        <td class="text-center"><img src="@item.ProductImage" alt="@item.ProductName" width="100" class="img-fluid" /></td>
+                        <td class="text-center">@item.ProductName</td>
+                        <td class="text-center">@item.Quantity</td>
+                        <td style="text-align: right;">@item.Total.ToString("n0")</td>
+                    </tr>
+                    i++;
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-right"><strong style="font-size: 18px;">Tổng cộng:</strong></td>
+                <td style="text-align: right;"><strong style="font-size: 18px;">@ViewBag.Total.ToString("n0")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+

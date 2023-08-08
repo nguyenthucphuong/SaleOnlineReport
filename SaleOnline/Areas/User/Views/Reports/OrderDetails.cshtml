@@ -1,0 +1,124 @@
+﻿@model SaleOnline.Models.Order
+@{
+    ViewData["Title"] = "OrderDetails";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<h2>Chi tiết đơn hàng #@Model.OrderId</h2>
+
+<p>Ngày đặt hàng: @Model.OrderDatetime.ToString("dd/MM/yyyy HH:mm:ss")</p>
+
+<h3>Danh sách sản phẩm:</h3>
+
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Hình ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th style="text-align: right;">Đơn giá</th>
+            <th style="text-align: right;">Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 0;
+            decimal subTotalDiscount = 0;
+            decimal aMount = 0;
+        }
+        @foreach (var item in ViewBag.OrderItems)
+        {
+            i++;
+            var discount = ViewBag.Discounts.ContainsKey(item.ProductId) ? ViewBag.Discounts[item.ProductId] : 0;
+            subTotalDiscount += (item.Price * item.Quantity * discount) / 100;
+            aMount = @Model.Total - subTotalDiscount;
+            <tr>
+                <td>@i</td>
+                <td><img src="@item.Product.ProductImage" alt="@item.Product.ProductName" width="50"></td>
+                <td>@item.Product.ProductName</td>
+                <td>@item.Quantity</td>
+                <td style="text-align: right;">
+                    @item.Price.ToString("n0")<br>
+                    -@discount%
+                </td>
+                <td style="text-align: right;">
+                    @((item.Price * item.Quantity).ToString("n0"))<br>
+                    -@(((item.Price * item.Quantity) * (discount / 100)).ToString("n0"))
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">Tổng cộng</td>
+            <td style="text-align: right;">@Model.Total.ToString("n0")</td>
+        </tr>
+        <tr>
+            <td colspan="5">Tổng giảm giá</td>
+            <td style="text-align: right;">-@subTotalDiscount.ToString("n0")</td>
+        </tr>
+        <tr style="font-weight: bold; font-size: 16px;">
+            <td colspan="5">Thành tiền</td>
+            <td style="text-align: right;">@aMount.ToString("n0")</td>
+        </tr>
+    </tfoot>
+</table>*@
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>STT</th>
+            <th>Hình ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th class="text-center">Số lượng</th>
+            <th style="text-align: right;">Đơn giá</th>
+            <th style="text-align: right;">Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 0;
+            decimal subTotalDiscount = 0;
+            decimal aMount = 0;
+        }
+
+        @foreach (var item in ViewBag.OrderItems)
+        {
+            i++;
+            var discount = ViewBag.Discounts.ContainsKey(item.ProductId) ? ViewBag.Discounts[item.ProductId] : 0;
+            subTotalDiscount += (item.Price * item.Quantity * discount) / 100;
+            aMount = @Model.Total - subTotalDiscount;
+            <tr>
+                <td>@i</td>
+                <td><img src="@item.Product.ProductImage" alt="@item.Product.ProductName" width="50"></td>
+                <td>@item.Product.ProductName</td>
+                <td class="text-center">@item.Quantity</td>
+                <td style="text-align: right;">@item.Price.ToString("n0")<br> -@discount% </td>
+                <td style="text-align: right;">
+                    @((item.Price * item.Quantity).ToString("n0"))<br>
+                    -@(((item.Price * item.Quantity) * (discount / 100)).ToString("n0"))
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">Tổng cộng</td>
+            <td style="text-align: right;">@Model.Total.ToString("n0")</td>
+        </tr>
+        <tr>
+            <td colspan="5">Tổng giảm giá</td>
+            <td style="text-align: right;">-@subTotalDiscount.ToString("n0")</td>
+        </tr>
+        <tr class="font-weight-bold">
+            <td colspan="5">Thành tiền</td>
+            <td style="text-align: right;">@aMount.ToString("n0")</td>
+        </tr>
+
+
+    </tfoot>
+</table>
+
+<p><a asp-area="User" asp-controller="Reports" asp-action="OrderHistory">Quay lại</a></p>
+

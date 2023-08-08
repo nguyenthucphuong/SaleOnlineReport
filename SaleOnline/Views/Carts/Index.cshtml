@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutMultishop.cshtml";
+    
+}
+
+
+<!-- Breadcrumb Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="breadcrumb-item text-dark" asp-area="" asp-controller="Shop" asp-action="Index">Shop</a>
+                <span class="breadcrumb-item active">Shopping Cart</span>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<!-- Cart Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-light table-borderless table-hover text-center mb-0">
+                @if (Model != null && Model?.Count == 0)
+                {
+                    <caption class="text-center">
+                        Không có dữ liệu
+                    </caption>
+                }
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-start" style="text-align: left;"><img src="@item.ProductImage" alt="ProductImage" style="width: 50px;"> @item.ProductName</td>
+                               
+                                <td class="text-start item-price" style="text-align: right;">
+                                    @item.ProductPrice.ToString("N0")<br />
+                                    @(item.Product.Promotion?.Discount != null ? "-"+item.Product.Promotion?.Discount.ToString("N0")+"%" : "")
+                                </td>
+                                                                
+                                <td class="align-middle">
+                                    <form action="@Url.Action("UpdateQuantity", "Carts")" method="post">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <div class="input-group quantity mx-auto" style="width: 100px;">
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-primary btn-minus" name="changeQuantity" value="-1">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                            </div>
+                                            <input type="number" class="form-control form-control-sm bg-secondary border-0 text-center" value="@item.Quantity" min="1" max=5 oninvalid="this.setCustomValidity('Vui lòng nhập: 1 <= số lượng <=5')" oninput="this.setCustomValidity('')">
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-primary btn-plus" name="changeQuantity" value="+1">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                                @{
+                                    decimal Total = item.Quantity * item.ProductPrice;
+                                    decimal TotalDiscount = (item.Product.Promotion?.Discount != null) ? (item.Quantity * item.ProductPrice * item.Product.Promotion.Discount) / 100 : 0;
+                                }
+
+                                <td class="text-start item-total" style="text-align: right;">
+                                    @Total.ToString("N0")<br>
+                                    @(TotalDiscount != 0 ? "-" + TotalDiscount.ToString("N0") : "")
+                                </td>
+                                <td class="align-middle">
+                                    <form action="@Url.Action("Delete", "Carts", new { productId = item.ProductId })" method="post">
+                                        <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-times"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-4">
+
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+            <div class="bg-light p-30 mb-5">
+                @if (Model != null)
+                {
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            @{
+                                decimal subTotal = 0;
+                                decimal subTotalDiscount = 0;
+                                foreach (var item in Model)
+                                {
+                                    subTotal += item.ProductPrice * item.Quantity;
+                                    subTotalDiscount += (item.ProductPrice * item.Quantity * (item.Product.Promotion?.Discount ?? 0)) / 100;
+                                }
+                                decimal toTal = subTotal - subTotalDiscount;
+                            }
+                            <h6>Sub Total</h6>
+                            <h6 class="subtotal">@subTotal.ToString("N0")</h6>
+                        </div>
+
+                    </div>
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal Discount</h6>
+                            <h6 class="subtotaldiscount">@(subTotalDiscount != 0 ? "-" + subTotalDiscount.ToString("N0") : "")</h6>
+                        </div>
+
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            <h5 class="total">@toTal.ToString("N0")</h5>
+                        </div>
+                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3" onclick="location.href='@Url.Action("Checkout", "Carts")'">Proceed To Checkout</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart End -->

@@ -1,0 +1,104 @@
+﻿@model IPagedList<Customer>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    <partial name="_BootstrapTablePartial" />
+}
+
+
+@section Search
+    {
+    <form asp-area="Admin" asp-controller="Customers" asp-action="Index" role="search">
+        <input type="text" placeholder="Search..." class="form-control" name="filter" style="color: white;">
+        <a href="#" onclick="this.closest('form').submit()">
+            <i class="fa fa-search"></i>
+        </a>
+    </form>
+}
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Customer List</h4>
+                    <table id="table" data-toggle="table" data-custom-sort="customSort">
+                        @if (Model != null && Model.Count == 0)
+                        {
+                            <caption class="text-center">
+                                Không có dữ liệu
+                            </caption>
+                        }
+                        <thead class="text-center">
+                            <tr>
+                                <th class="text-center" data-field="stt" data-sortable="true">STT</th>
+                                <th class="text-center" data-field="username" data-sortable="true">UserName</th>
+                                <th class="text-center" data-field="name" data-sortable="true">Name</th>
+                                <th class="text-center" data-field="adress" data-sortable="true">Address</th>
+                                <th class="text-center" data-field="phone" data-sortable="true">Phone Number</th>
+                                <th class="text-center" data-field="status" data-sortable="true">Status</th>
+                                @*Tạo cột ẩn để sort*@
+                                <th data-field="isActive" data-visible="false">IsActive</th>
+                                <th class="text-center">Setting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int count = ViewBag.ItemCount;
+                                @foreach (var customer in Model)
+                                {
+                                    <tr>
+                                        <td class="text-center">@count</td>
+                                        <td class="text-start">@customer.User.UserName</td>
+                                        <td class="text-start">@customer.FullName</td>
+                                        <td class="text-start">@customer.Address</td>
+                                        <td class="text-center">@customer.PhoneNumber</td>
+
+                                        <td class="text-center">
+                                            <form asp-area="Admin" asp-controller="Customers" asp-action="StatusUpdate" asp-route-customerId="@customer.CustomerId" method="post">
+                                                <button type="submit" class="@(customer.IsActive == true ? "pd-setting" : "ds-setting")">@((customer.IsActive == true) ? "Kích hoạt" : (customer.IsActive == false) ? "Tạm khóa" : "Lỗi")</button>
+                                            </form>
+                                        </td>
+
+                                        <td>@customer.IsActive</td>
+                                        <td class="text-center">
+                                            @*<a asp-area="Admin" asp-controller="Customers" asp-action="CapNhat" asp-route-customerId="@customer.CustomerId" class="pd-setting-ed" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </a>*@
+                                            <a class="px-2 delete-button" href="@(customer.IsActive == true ? Url.Action("Xoa", "Customers", new { area = "Admin", customerId = customer.CustomerId }) : $"#deleteModal_{count}")" data-toggle="@(customer.IsActive == true ? "" : "modal")" data-target="@(customer.IsActive == true ? "" : $"#deleteModal_{count}")">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </a>
+                                            <div class="modal fade" id="deleteModal_@count" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content text-white" style="background-color: #152036;">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Xác nhận</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" style="font-size: 18px;">
+                                                            Bạn có chắc chắn muốn xóa không?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                            <a asp-area="Admin" asp-controller="Customers" asp-action="Xoa" asp-route-customerId="@customer.CustomerId" class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <partial name="_Paging" model="Model" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

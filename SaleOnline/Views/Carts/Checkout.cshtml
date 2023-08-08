@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_LayoutMultishop.cshtml";
+}
+
+<!-- Breadcrumb Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="breadcrumb-item text-dark" asp-area="" asp-controller="Shop" asp-action="Index">Shop</a>
+                <span class="breadcrumb-item active">Checkout</span>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<!-- Checkout Start -->
+<form id="place-order-form" asp-area="" asp-controller="Carts" asp-action="PlaceOrder" method="post" style="width: 100%;">
+<div class="container-fluid">
+    <div class="row px-xl-5">
+   
+        <div class="col-lg-8">
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+            <div class="bg-light p-30 mb-5">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input class="form-control" type="text" name="FullName" placeholder="Nguyễn Phương" value="@(ViewData["FullName"])" minlength="1" maxlength="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input class="form-control" type="text" name="Address" placeholder="9 Nguyễn Biểu" value="@(ViewData["Address"])" minlength="1" maxlength="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile No</label>
+                        <input class="form-control" type="tel" name="PhoneNumber" placeholder="0901234567" value="@(ViewData["PhoneNumber"])" pattern="[0-9]{10}" required>
+                    </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
+            <div class="bg-light p-30 mb-5">
+                @if (Model != null)
+                {
+                    <div class="border-bottom">
+                        <h6 class="mb-3">Products</h6>
+                        @foreach (var item in Model)
+                        {
+                            <div class="d-flex justify-content-between">
+                                <p>@item.ProductName</p>
+                                    <p>@item.Total.ToString("N0")</p>
+                            </div>
+                        }
+                    </div>
+                    <div class="border-bottom pt-3 pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                                @{
+                                    decimal subTotal = 0;
+                                    decimal subTotalDiscount = 0;
+                                    foreach (var item in Model)
+                                { 
+                                    subTotal += item.ProductPrice * item.Quantity;
+                                    subTotalDiscount += (item.ProductPrice * item.Quantity * (item.Product.Promotion?.Discount ?? 0)) / 100;
+                                }
+                                    decimal toTal = subTotal - subTotalDiscount;
+                            }
+                            <h6>Subtotal</h6>
+                                <h6>@subTotal.ToString("N0")</h6>
+                        </div>
+                    </div>
+                        <div class="border-bottom pt-3 pb-2">
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <h6>Subtotal Discount</h6>
+                                <h6>-@subTotalDiscount.ToString("N0")</h6>
+                            </div>
+                        </div>
+
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                                <h5>@toTal.ToString("N0")</h5>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="mb-5">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
+                <div class="bg-light p-30">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="nganhang" value="Chuyển khoản ngân hàng">
+                                <label class="custom-control-label" for="nganhang">Chuyển khoản ngân hàng</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="tindung" value="Thanh toán qua thẻ tín dụng">
+                                <label class="custom-control-label" for="tindung">Thanh toán qua thẻ tín dụng</label>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="nhanhang" value="Thanh toán khi nhận hàng" checked>
+                                <label class="custom-control-label" for="nhanhang">Thanh toán khi nhận hàng</label>
+                            </div>
+                        </div>
+                    <button class="btn btn-block btn-primary font-weight-bold py-3" type="submit">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+<!-- Checkout End -->
+

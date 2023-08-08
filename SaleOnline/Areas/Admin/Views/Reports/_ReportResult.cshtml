@@ -1,0 +1,34 @@
+﻿@model object
+
+@if (Model is int totalOrders)
+{
+    <p>Total Orders: @totalOrders</p>
+}
+else if (Model is decimal totalRevenue)
+{
+    <p>Total Revenue: @totalRevenue.ToString("C")</p>
+}
+else if (Model is List<dynamic> data)
+{
+    <table>
+        <thead>
+            <tr>
+                @foreach (var prop in data[0].GetType().GetProperties())
+                {
+                    <th>@prop.Name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in data)
+            {
+                <tr>
+                    @foreach (var prop in item.GetType().GetProperties())
+                    {
+                        <td>@prop.GetValue(item)</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

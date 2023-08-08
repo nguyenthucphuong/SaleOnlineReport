@@ -1,0 +1,500 @@
+﻿@model User
+@{
+    //var usernames = ViewBag.Usernames;
+    //var emails = ViewBag.Emails;
+}
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Register | Nalika - Material Admin Template</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon
+        ============================================ -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/template/nalika/img/favicon.ico">
+    <!-- Google Fonts
+        ============================================ -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
+    <!-- Bootstrap CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/bootstrap.min.css">
+    <!-- Bootstrap CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/font-awesome.min.css">
+    <!-- owl.carousel CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/owl.carousel.css">
+    <link rel="stylesheet" href="~/template/nalika/css/owl.theme.css">
+    <link rel="stylesheet" href="~/template/nalika/css/owl.transitions.css">
+    <!-- animate CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/animate.css">
+    <!-- normalize CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/normalize.css">
+    <!-- main CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/main.css">
+    <!-- morrisjs CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/morrisjs/morris.css">
+    <!-- mCustomScrollbar CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/scrollbar/jquery.mCustomScrollbar.min.css">
+    <!-- metisMenu CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/metisMenu/metisMenu.min.css">
+    <link rel="stylesheet" href="~/template/nalika/css/metisMenu/metisMenu-vertical.css">
+    <!-- calendar CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/calendar/fullcalendar.min.css">
+    <link rel="stylesheet" href="~/template/nalika/css/calendar/fullcalendar.print.min.css">
+    <!-- forms CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/form/all-type-forms.css">
+    <!-- style CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/style.css">
+    <!-- responsive CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/responsive.css">
+    <!-- modernizr JS
+        ============================================ -->
+    <script src="~/template/nalika/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+    <link rel="stylesheet" href="~/template/css/modals.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   
+
+</head>
+
+<body>
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+   @* @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }*@
+
+    <div class="color-line"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="back-link back-backend">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
+            <div class="col-md-6 col-md-6 col-sm-6 col-xs-12">
+@*                <div class="text-center custom-login" text-white>
+                    <h3>Registration</h3>
+                </div>*@
+                <div class="hpanel">
+                    <div class="panel-body" style=" background-color: #1B2A47; color: white;">
+                        <form id="loginForm" asp-area="Admin" asp-controller="Users" asp-action="Register" method="post" onsubmit="return validateForm()">
+                            <div class="row">
+                                <div class="form-group col-lg-12">
+                                    <label>Username</label>
+                                   @* <input class="form-control" placeholder="Username" id="userName" name="userName" value="@Model?.UserName" aria-describedby="text" title="Username phải bắt đầu với 1 kí tự và chỉ chứa các kí tự và số." oninvalid="this.setCustomValidity('Vui lòng nhập lại Username!')" oninput="this.setCustomValidity('')" pattern="[a-zA-Z][a-zA-Z0-9]*" onchange="checkUsername(this.value)" required>*@
+                                    <input class="form-control" placeholder="Nhập kí tự thường hoặc số" id="userName" name="userName" value="@Model?.UserName" aria-describedby="text" title="kí tự thường hoặc số" oninvalid="this.setCustomValidity('Vui lòng nhập lại kí tự thường!')" oninput="this.setCustomValidity('')" pattern="[a-z][a-z0-9]*" onchange="checkUsername(this.value)" minlength="1" maxlength="50" required>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label>Password</label>
+                                    <input type="password" class="form-control" placeholder="Độ dài từ 6 - 50 kí tự" id="passWord" name="passWord" value="@Model?.Password" aria-describedby="text" title="Độ dài từ 6 - 50 kí tự" oninvalid="this.setCustomValidity('Vui lòng nhập lại tối thiểu 6 kí tự!')" oninput="this.setCustomValidity('')" minlength="6" maxlength="50" required>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label>Repeat Password</label>
+                                    <input type="password" class="form-control" placeholder="Repeat Password" id="repeatpassWord" name="repeatpassWord" aria-describedby="text" title="Độ dài từ 6 - 50 kí tự." oninvalid="this.setCustomValidity('Vui lòng nhập lại tối thiểu 6 kí tự!')" oninput="this.setCustomValidity('')" minlength="6" maxlength="50" required>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label>Email Address</label>
+                                    <input type="email" class="form-control" placeholder="abc@gmail.com" id="eMail" name="eMail" value="@Model?.Email" aria-describedby="text" oninvalid="this.setCustomValidity('Vui lòng nhập lại Email!')" oninput="this.setCustomValidity('')" onchange="checkEmail(this.value)" onkeyup="this.value = this.value.toLowerCase();" required>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label>Repeat Email Address</label>
+                                    <input type="email" class="form-control" placeholder="Repeat Email" id="repeateMail" name="repeateMail" aria-describedby="text" oninvalid="this.setCustomValidity('Vui lòng nhập lại Email!')" oninput="this.setCustomValidity('')" required>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" id="register" class="btn btn-success loginbtn">Register</button>
+                                <button type="reset" class="btn btn-default" value="Reset">Reset</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
+        </div>
+        @*<div class="row">
+            <div class="col-md-12 text-center">
+                <p>Copyright © 2018 <a href="https://colorlib.com/wp/templates/">Colorlib</a> All rights reserved.</p>
+            </div>
+        </div>*@
+    </div>
+
+   @* <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #152036; color: white;">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Thông báo</h4>
+                </div>
+                <div class="modal-body" style="font-size: 18px;">
+                    <p id="modalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #152036; color: white;">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Thông báo</h4>
+                </div>
+                <div class="modal-body" style="font-size: 18px;">
+                    <p id="modalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+   @* <script>
+        var usernameExists = false;
+        var emailExists = false;
+        function showModal(message) {
+            $('#modalMessage').text(message);
+            $('#myModal').modal('show');
+        }
+        function checkUsername(username) {
+            $.get('@Url.Action("CheckUserEmail", "Users", new { area = "Admin" })?username=' + username, function (data) {
+                if (data.exists && data.type === "username") {
+                    //alert("Username đã tồn tại! Bạn vui lòng nhập Username khác!");
+                    showModal("Username đã tồn tại! Bạn vui lòng nhập Username khác!");
+                    //var modalMessage = "Role không nằm trong danh sách! Bạn vui lòng nhập lại!";
+                    //document.getElementById("modalMessage").textContent = modalMessage;
+                    //$('#myModal').modal('show');
+                    usernameExists = true;
+                } else {
+                    usernameExists = false;
+                }
+            });
+        }
+
+        function checkEmail(email) {
+            $.get('@Url.Action("CheckUserEmail", "Users", new { area = "Admin" })?email=' + email, function (data) {
+                if (data.exists && data.type === "email") {
+                    alert("Email đã tồn tại! Bạn vui lòng nhập lại!");
+                    //showModal("Email đã tồn tại! Bạn vui lòng nhập Email khác!");
+                    emailExists = true;
+                } else {
+                    emailExists = false;
+                }
+            });
+        }
+
+        function validateForm() {
+            // Lấy giá trị của các trường nhập liệu
+            var password = document.getElementById("passWord").value;
+            var repeatPassword = document.getElementById("repeatpassWord").value;
+            var email = document.getElementById("eMail").value;
+            var repeatEmail = document.getElementById("repeateMail").value;
+
+            // Kiểm tra xem password và repeatPassword có giống nhau không
+            if (password !== repeatPassword) {
+                alert("Password và Repeat Password phải giống nhau!");
+                //showModal("Password và Repeat Password phải giống nhau!");
+                return false;
+            }
+
+            // Kiểm tra xem email và repeatEmail có giống nhau không
+            if (email !== repeatEmail) {
+                alert("Email và Repeat Email phải giống nhau!");
+                //showModal("Email và Repeat Email phải giống nhau!");
+                return false;
+            }
+
+            // Kiểm tra xem username đã tồn tại hay chưa
+            if (usernameExists) {
+                //alert("Username đã tồn tại! Bạn vui lòng nhập lại!");
+                showModal("Username đã tồn tại! Bạn vui lòng nhập Username khác!"");
+                return false;
+            }
+
+            // Kiểm tra xem email đã tồn tại hay chưa
+            if (emailExists) {
+                alert("Email đã tồn tại! Bạn vui lòng nhập lại!");
+                //showModal("Email đã tồn tại! Bạn vui lòng nhập Email khác!"");
+                return false;
+            }
+
+            // Nếu tất cả đều hợp lệ, cho phép form được gửi đi
+            return true;
+        }
+
+        
+    </script>*@
+
+
+    <script>
+        var usernameExists = false;
+        var emailExists = false;
+        function showModal(message) {
+            $('#modalMessage').text(message);
+            $('#myModal').modal('show');
+        }
+        //function checkUsername(username) {
+        //    return new Promise((resolve, reject) => {
+        //        $.get('@Url.Action("CheckUserEmail", "Users", new { area = "Admin" })?username=' + username, function (data) {
+        //            if (data.exists && data.type === "username") {
+        //                showModal("Username đã tồn tại! Bạn vui lòng nhập lại!");
+        //                usernameExists = true;
+        //            } else {
+        //                usernameExists = false;
+        //            }
+        //            resolve();
+        //        });
+        //    });
+        //}
+
+        function checkUsername(username) {
+            return new Promise((resolve, reject) => {
+                $.get('@Url.Action("CheckUserEmail", "Users", new { area = "Admin" })?username=' + username.toLowerCase(), function (data) {
+                    if (data.exists && data.type === "username") {
+                        showModal("Username đã tồn tại! Bạn vui lòng nhập lại!");
+                        usernameExists = true;
+                    } else {
+                        usernameExists = false;
+                    }
+                    resolve();
+                });
+            });
+        }
+
+
+
+        function checkEmail(email) {
+            return new Promise((resolve, reject) => {
+                $.get('@Url.Action("CheckUserEmail", "Users", new { area = "Admin" })?email=' + email, function (data) {
+                    if (data.exists && data.type === "email") {
+                        showModal("Email đã tồn tại! Bạn vui lòng nhập lại!");
+                        emailExists = true;
+                    } else {
+                        emailExists = false;
+                    }
+                    resolve();
+                });
+            });
+        }
+
+        function validateForm() {
+            var username = document.getElementById("userName").value;
+            var password = document.getElementById("passWord").value;
+            var repeatPassword = document.getElementById("repeatpassWord").value;
+            var email = document.getElementById("eMail").value;
+            var repeatEmail = document.getElementById("repeateMail").value;
+
+            if (password !== repeatPassword) {
+                showModal("Password và Repeat Password phải giống nhau!");
+                return false;
+            }
+
+            if (email !== repeatEmail) {
+                showModal("Email và Repeat Email phải giống nhau!");
+                return false;
+            }
+
+            Promise.all([checkUsername(username), checkEmail(email)]).then(() => {
+                if (usernameExists) {
+                    showModal("Username đã tồn tại! Bạn vui lòng nhập lại!");
+                    return false;
+                }
+
+                if (emailExists) {
+                    showModal("Email đã tồn tại! Bạn vui lòng nhập lại!");
+                    return false;
+                }
+
+                // Nếu tất cả đều hợp lệ, cho phép form được gửi đi
+                document.getElementById("loginForm").submit();
+            });
+
+            // Ngăn form không được gửi đi ngay lập tức
+            return false;
+        }
+
+
+
+    </script>
+
+
+    @*<script>
+        function validateForm() {
+            // Lấy giá trị của các trường nhập liệu
+            var username = document.getElementById("userName").value;
+            var password = document.getElementById("passWord").value;
+            var repeatPassword = document.getElementById("repeatpassWord").value;
+            var email = document.getElementById("eMail").value;
+            var repeatEmail = document.getElementById("repeateMail").value;
+
+            // Kiểm tra xem username đã tồn tại trong cơ sở dữ liệu hay chưa
+            if (@usernames.includes(ViewBag.Usernames)) {
+                alert("Username đã tồn tại!");
+                return false;
+            }
+
+            // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu hay chưa
+            if (@emails.includes(ViewBag.Emails)) {
+                alert("Email đã tồn tại!");
+                return false;
+            }
+
+            // Kiểm tra xem password và repeatPassword có giống nhau không
+            if (password !== repeatPassword) {
+                alert("Password và Repeat Password phải giống nhau!");
+                return false;
+            }
+
+            // Kiểm tra xem email và repeatEmail có giống nhau không
+            if (email !== repeatEmail) {
+                alert("Email và Repeat Email phải giống nhau!");
+                return false;
+            }
+
+            // Nếu tất cả đều hợp lệ, cho phép form được gửi đi
+            return true;
+        }
+    </script>*@
+
+
+    @*
+
+    <script>
+    var usernameExists = false;
+
+    function checkUsername(username) {
+    $.get('@Url.Action("CheckUsername", "Users", new { area = "Admin" })?username=' + username, function (data) {
+    if (data.exists) {
+    alert("Username đã tồn tại! Bạn vui lòng nhập lại!");
+    usernameExists = true;
+    } else {
+    usernameExists = false;
+    }
+    });
+    }
+    function validateForm() {
+    // Lấy giá trị của các trường nhập liệu
+    var password = document.getElementById("passWord").value;
+    var repeatPassword = document.getElementById("repeatpassWord").value;
+    var email = document.getElementById("eMail").value;
+    var repeatEmail = document.getElementById("repeateMail").value;
+
+    // Kiểm tra xem password và repeatPassword có giống nhau không
+    if (password !== repeatPassword) {
+    alert("Password và Repeat Password phải giống nhau!");
+    return false;
+    }
+
+    // Kiểm tra xem email và repeatEmail có giống nhau không
+    if (email !== repeatEmail) {
+    alert("Email và Repeat Email phải giống nhau!");
+    return false;
+    }
+    // Kiểm tra xem username đã tồn tại hay chưa
+    if (usernameExists) {
+    alert("Username đã tồn tại! Bạn vui lòng nhập lại!");
+    return false;
+    }
+    // Nếu tất cả đều hợp lệ, cho phép form được gửi đi
+    return true;
+    }
+
+
+
+    function checkEmail(email) {
+    var emails = @Html.Raw(Json.Serialize(ViewBag.Emails));
+    if (emails.includes(email)) {
+    // Email đã tồn tại trong cơ sở dữ liệu
+    // Hiển thị thông báo lỗi ở đây
+    } else {
+    // Email chưa tồn tại trong cơ sở dữ liệu
+    // Thực hiện các thao tác khác ở đây
+    }
+    }
+
+    </script>
+
+    *@
+
+
+
+    <!-- jquery
+        ============================================ -->
+    <script src="~/template/nalika/js/vendor/jquery-1.11.3.min.js"></script>
+    <!-- bootstrap JS
+        ============================================ -->
+    <script src="~/template/nalika/js/bootstrap.min.js"></script>
+    <!-- wow JS
+        ============================================ -->
+    <script src="~/template/nalika/js/wow.min.js"></script>
+    <!-- price-slider JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery-price-slider.js"></script>
+    <!-- meanmenu JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery.meanmenu.js"></script>
+    <!-- owl.carousel JS
+        ============================================ -->
+    <script src="~/template/nalika/js/owl.carousel.min.js"></script>
+    <!-- sticky JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery.sticky.js"></script>
+    <!-- scrollUp JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery.scrollUp.min.js"></script>
+    <!-- mCustomScrollbar JS
+        ============================================ -->
+    <script src="~/template/nalika/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/template/nalika/js/scrollbar/mCustomScrollbar-active.js"></script>
+    <!-- metisMenu JS
+        ============================================ -->
+    <script src="~/template/nalika/js/metisMenu/metisMenu.min.js"></script>
+    <script src="~/template/nalika/js/metisMenu/metisMenu-active.js"></script>
+    <!-- tab JS
+        ============================================ -->
+    <script src="~/template/nalika/js/tab.js"></script>
+    <!-- icheck JS
+        ============================================ -->
+    <script src="~/template/nalika/js/icheck/icheck.min.js"></script>
+    <script src="~/template/nalika/js/icheck/icheck-active.js"></script>
+    <!-- plugins JS
+        ============================================ -->
+    <script src="~/template/nalika/js/plugins.js"></script>
+    <!-- main JS
+        ============================================ -->
+    <script src="~/template/nalika/js/main.js"></script>
+</body>
+
+</html>

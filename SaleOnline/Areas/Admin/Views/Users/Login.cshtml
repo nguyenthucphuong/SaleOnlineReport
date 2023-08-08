@@ -1,0 +1,273 @@
+﻿@using Newtonsoft.Json
+@model User
+
+
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Login | Nalika - Material Admin Template</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon
+        ============================================ -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/template/nalika/img/favicon.ico">
+    <!-- Google Fonts
+        ============================================ -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
+    <!-- Bootstrap CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/bootstrap.min.css">
+    <!-- Bootstrap CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/font-awesome.min.css">
+    <!-- owl.carousel CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/owl.carousel.css">
+    <link rel="stylesheet" href="~/template/nalika/css/owl.theme.css">
+    <link rel="stylesheet" href="~/template/nalika/css/owl.transitions.css">
+    <!-- animate CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/animate.css">
+    <!-- normalize CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/normalize.css">
+    <!-- main CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/main.css">
+    <!-- morrisjs CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/morrisjs/morris.css">
+    <!-- mCustomScrollbar CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/scrollbar/jquery.mCustomScrollbar.min.css">
+    <!-- metisMenu CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/metisMenu/metisMenu.min.css">
+    <link rel="stylesheet" href="~/template/nalika/css/metisMenu/metisMenu-vertical.css">
+    <!-- calendar CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/calendar/fullcalendar.min.css">
+    <link rel="stylesheet" href="~/template/nalika/css/calendar/fullcalendar.print.min.css">
+    <!-- forms CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/form/all-type-forms.css">
+    <!-- style CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/style.css">
+    <!-- responsive CSS
+        ============================================ -->
+    <link rel="stylesheet" href="~/template/nalika/css/responsive.css">
+    <!-- modernizr JS
+        ============================================ -->
+    <script src="~/template/nalika/js/vendor/modernizr-2.8.3.min.js"></script>
+   
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body>
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+   @* @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-danger" ]">
+            @TempData["Message"]
+        </div>
+    }*@
+
+    <div class="color-line"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="back-link back-backend">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"></div>
+            <div class="col-md-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="text-center m-b-md custom-login text-muted">
+                    <h3>PLEASE LOGIN TO WEBSITE</h3>
+                    @*<p>This is the best app ever!</p>*@
+                </div>
+                <div class="hpanel">
+                    <div class="panel-body">
+                        <form id="loginForm" asp-area="Admin" asp-controller="Users" asp-action="Login" method="post">
+                            <div class="form-group">
+                                <label class="control-label" for="email">Email</label>
+                                <input type="email" placeholder="example@gmail.com" title="Please enter your email" required="" value="@Model?.Email" name="email" id="email" class="form-control">
+                                <span class="help-block small">Your email to login</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="password">Password</label>
+                                <input type="password" title="Please enter your password" placeholder="Độ dài từ 6 - 50 kí tự" required="" value="@Model?.Password" name="password" id="password" class="form-control">
+                                <span class="help-block small">Your strong password</span>
+                            </div>
+
+                            <div class="checkbox login-checkbox" style="margin-left: 20px;">
+                                <label>
+                                    <input type="checkbox" class="i-checks"> Remember me
+                                </label>
+                                <p class="help-block small">(if this is a private computer)</p>
+                            </div>
+
+                            <button class="btn btn-success btn-block loginbtn">Login</button>
+                            <a class="btn btn-custon-four btn-success btn-block" asp-area="Admin" asp-controller="Users" asp-action="Register">Register</a>
+
+                          @*  <div class="text-center m-b-md text-muted">
+                                <a class="btn btn-primary" role="button" id="forgetpassword" name="email" href="@Url.Action("ForgetPassword", "Users", new { area = "Admin" })" onclick="submitForm()">Forget password?</a>
+                            </div>*@
+                            <a class="btn btn-default btn-block" id="forgetpassword" name="email" href="@Url.Action("ForgetPassword", "Users", new { area = "Admin" })" onclick="submitForm()">Forget password?</a>
+                        
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-md-12 col-sm-12 col-xs-12 text-center">
+               @* <p>Copyright © 2018 <a href="https://colorlib.com/wp/templates/">Colorlib</a> All rights reserved.</p>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="message-modal" style="background-color: transparent;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: transparent; border: none;">
+                <div class="modal-body" style="padding: 0; background-color: transparent;">
+                    <p id="message-content" style="text-align: center; padding: 20px; background-color: #152036; color: white; font-size: 18px;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+
+    <script>
+        function submitForm() {
+            var email = document.getElementById("email").value;
+            var forgetPasswordLink = document.getElementById("forgetpassword");
+            forgetPasswordLink.href = "@Url.Action("ForgetPassword", "Users", new { area = "Admin" })" + "?email=" + email;
+        }
+    </script>
+
+
+
+
+    @*<script>
+        function submitForm() {
+            var email = document.getElementById("forgetpassword").getAttribute("name");
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", '@Url.Action("ForgetPassword", "Users", new { area = "Admin" })');
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", "email");
+            hiddenField.setAttribute("value", email);
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>*@
+
+
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                var message = '@(TempData["Message"] != null ? Html.Raw(JsonConvert.SerializeObject(TempData["Message"])) : "")';
+                if (message !== '') {
+                    message = message.replace(/"/g, '');
+                    $("#message-content").text(message);
+                    $("#message-modal").modal('show');
+                    setTimeout(function () {
+                        $("#message-modal").modal('hide');
+                    }, 2000);
+                }
+            });
+            function showModal(message) {
+                $('#modalMessage').text(message);
+                $('#myModal').modal('show');
+            }
+        </script>
+    }
+    
+   @* <script>
+        function checkEmail(email) {
+            event.preventDefault();
+            $.get('@Url.Action("CheckUserEmail", "Users", new { area = "Admin" })?email=' + email, function (data) {
+                if (!data.exists) {
+                    //showModal("Vui lòng nhập lại đúng Email mà bạn đã đăng kí khi tạo tài khoản!");
+                    TempData["Message"] = "Vui lòng nhập lại đúng Email mà bạn đã đăng kí khi tạo tài khoản!";
+                } else {
+                    window.location.href = '@Url.Action("ForgetPassword", "Users", new { area = "Admin" })?email=' + email;
+                }
+            });
+        }
+        function showModal(message) {
+            $('#modalMessage').text(message);
+            $('#myModal').modal('show');
+        }
+
+    </script>*@
+
+
+    <!-- jquery
+        ============================================ -->
+    <script src="~/template/nalika/js/vendor/jquery-1.11.3.min.js"></script>
+    <!-- bootstrap JS
+        ============================================ -->
+    <script src="~/template/nalika/js/bootstrap.min.js"></script>
+    <!-- wow JS
+        ============================================ -->
+    <script src="~/template/nalika/js/wow.min.js"></script>
+    <!-- price-slider JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery-price-slider.js"></script>
+    <!-- meanmenu JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery.meanmenu.js"></script>
+    <!-- owl.carousel JS
+        ============================================ -->
+    <script src="~/template/nalika/js/owl.carousel.min.js"></script>
+    <!-- sticky JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery.sticky.js"></script>
+    <!-- scrollUp JS
+        ============================================ -->
+    <script src="~/template/nalika/js/jquery.scrollUp.min.js"></script>
+    <!-- mCustomScrollbar JS
+        ============================================ -->
+    <script src="~/template/nalika/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/template/nalika/js/scrollbar/mCustomScrollbar-active.js"></script>
+    <!-- metisMenu JS
+        ============================================ -->
+    <script src="~/template/nalika/js/metisMenu/metisMenu.min.js"></script>
+    <script src="~/template/nalika/js/metisMenu/metisMenu-active.js"></script>
+    <!-- tab JS
+        ============================================ -->
+    <script src="~/template/nalika/js/tab.js"></script>
+    <!-- icheck JS
+        ============================================ -->
+    <script src="~/template/nalika/js/icheck/icheck.min.js"></script>
+    <script src="~/template/nalika/js/icheck/icheck-active.js"></script>
+    <!-- plugins JS
+        ============================================ -->
+    <script src="~/template/nalika/js/plugins.js"></script>
+    <!-- main JS
+        ============================================ -->
+    <script src="~/template/nalika/js/main.js"></script>
+</body>
+
+</html>

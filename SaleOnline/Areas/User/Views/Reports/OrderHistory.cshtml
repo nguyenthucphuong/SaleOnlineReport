@@ -1,0 +1,45 @@
+﻿@model List<SaleOnline.Models.Order>
+@{
+    ViewData["Title"] = "OrderHistory";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+}
+
+<h2>Lịch sử đơn hàng</h2>
+<table class="table">
+    @if (Model != null && Model.Count == 0)
+    {
+        <caption class="text-center">
+            Không có dữ liệu
+        </caption>
+    }
+    <thead>
+        <tr >
+            <th>Mã đơn hàng</th>
+            <th class="text-center">Ngày đặt hàng</th>
+            <th class="text-center">Tổng tiền</th>
+            <th>Chi tiết</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+         @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.OrderId</td>
+                    <td class="text-center">@item.OrderDatetime.ToShortDateString()</td>
+                    <td style="text-align: right;">@item.Total.ToString("n0")</td>
+                    <td><a asp-area="User" asp-controller="Reports" asp-action="OrderDetails" asp-route-orderid="@item.OrderId">Xem chi tiết</a></td>
+                    <td>@ViewBag.Statuses[item.OrderId]</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+
+
+

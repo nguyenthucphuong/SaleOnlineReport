@@ -1,0 +1,149 @@
+﻿@model IPagedList<Product>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    <partial name="_BootstrapTablePartial" />
+}
+
+@section Search
+    {
+    <form asp-area="Admin" asp-controller="Products" asp-action="Index" role="search">
+        <input type="text" placeholder="Search..." class="form-control" name="filter" style="color: white;">
+        <a href="#" onclick="this.closest('form').submit()">
+            <i class="fa fa-search"></i>
+        </a>
+    </form>
+}
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Products List</h4>
+                    <div class="add-product">
+                        <a href="#" onclick="document.getElementById('hidden-form').submit()">Add</a>
+                    </div>
+                    <form id="hidden-form" asp-area="Admin" asp-controller="Products" asp-action="Them" method="post" style="display: none;">
+                    </form>
+                    <table id="table" data-toggle="table" data-custom-sort="customSort">
+                        @if (Model != null && Model.Count == 0)
+                        {
+                            <caption class="text-center">
+                                Không có dữ liệu
+                            </caption>
+                        }
+                        <thead class="text-center">
+                            <tr>
+                                <th class="text-center" data-field="stt" data-sortable="true">STT</th>
+                                <th class="text-center" data-field="name" data-sortable="true">Name</th>
+                                <th class="text-center" data-field="price" data-sortable="true">Price</th>
+                                <th class="text-center" data-field="description" data-sortable="true">Description</th>
+                                <th class="text-center" data-field="image" data-sortable="true">Image</th>
+                                <th class="text-center" data-field="category" data-sortable="true">Category</th>
+                                <th class="text-center" data-field="proId" data-sortable="true">Promotion</th>
+                                <th class="text-center" data-field="user" data-sortable="true">User</th>
+                                <th class="text-center" data-field="new" data-sortable="true">New</th>
+                                <th class="text-center" data-field="sale" data-sortable="true">Sale</th>
+                                <th class="text-center" data-field="pro" data-sortable="true">Pro</th>
+                                <th class="text-center" data-field="status" data-sortable="true">Status</th>
+                                @*Tạo cột ẩn để sort*@
+                                <th data-field="isActive" data-visible="false">IsActive</th>
+                                <th class="text-center">Setting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int count = ViewBag.ItemCount;
+                                @foreach (var product in Model)
+                                {
+                                    <tr id="@(product.ProductId == ViewBag.TickId ? "tickRow" : "")">
+                                        <td class="text-center">@count</td>
+                                       
+                                        <td class="text-start">@product.ProductName</td>
+                                       
+                                        <td>@(product.ProductPrice != 0 ? string.Format("{0:N0}", product.ProductPrice) : "")</td>
+                                        <td>@(product.ProductDes?.Length > 50 ? product.ProductDes.Substring(0, 50) + "..." : product.ProductDes)</td>
+
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(product.ProductImage))
+                                            {
+                                                <img src="@product.ProductImage" alt="Product Image" width="50" height="50">
+                                            }
+                                        </td>
+
+                                        <td>@product.Category?.CategoryName</td>
+
+                                        <td>@product.Promotion?.Discount?.ToString()@(product.Promotion?.Discount != null ? "%" : "")</td>
+                                        <td>@product.User?.UserName</td>
+                                        @{
+                                            var isNew = product.IsNew as bool?;
+                                            var isNewClass = isNew.HasValue ? (isNew.Value ? "text-success" : "text-danger") : "text-warning";
+                                            var isNewText = isNew.HasValue ? (isNew.Value ? "On" : "Off") : "Error";
+                                        }
+                                        <td class="text-center @isNewClass">
+                                            @isNewText
+                                        </td>
+                                        @{
+                                            var isSale = product.IsSale as bool?;
+                                            var isSaleClass = isSale.HasValue ? (isSale.Value ? "text-success" : "text-danger") : "text-warning";
+                                            var isSaleText = isSale.HasValue ? (isSale.Value ? "On" : "Off") : "Error";
+                                        }
+                                        <td class="text-center @isSaleClass">
+                                            @isSaleText
+                                        </td>
+                                        @{
+                                            var isPro = product.IsPro as bool?;
+                                            var isProClass = isPro.HasValue ? (isPro.Value ? "text-success" : "text-danger") : "text-warning";
+                                            var isProText = isPro.HasValue ? (isPro.Value ? "On" : "Off") : "Error";
+                                        }
+                                        <td class="text-center @isProClass">
+                                            @isProText
+                                        </td>
+                                        <td class="text-center">
+                                            <form asp-area="Admin" asp-controller="Products" asp-action="StatusUpdate" asp-route-productId="@product.ProductId" method="post">
+                                                <button type="submit" class="@(product.IsActive == true ? "pd-setting" : "ds-setting")">@((product.IsActive == true) ? "Kích hoạt" : (product.IsActive == false) ? "Tạm khóa" : "Lỗi")</button>
+                                            </form>
+                                        </td>
+
+                                        <td>@product.IsActive</td>
+                                        <td class="text-center">
+                                            <a asp-area="Admin" asp-controller="Products" asp-action="CapNhat" asp-route-productId="@product.ProductId" class="pd-setting-ed" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="px-2 delete-button" href="@(product.IsActive == true ? Url.Action("Xoa", "Products", new { area = "Admin", productId = product.ProductId }) : $"#deleteModal_{count}")" data-toggle="@(product.IsActive == true ? "" : "modal")" data-target="@(product.IsActive == true ? "" : $"#deleteModal_{count}")">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </a>
+                                            <div class="modal fade" id="deleteModal_@count" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content text-white" style="background-color: #152036;">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Xác nhận</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" style="font-size: 18px;">
+                                                             Bạn có chắc chắn muốn xóa không?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                            <a asp-area="Admin" asp-controller="Products" asp-action="Xoa" asp-route-productId="@product.ProductId" class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                        <partial name="_Paging" model="Model" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

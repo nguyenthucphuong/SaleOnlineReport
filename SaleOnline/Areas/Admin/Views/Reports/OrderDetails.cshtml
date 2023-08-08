@@ -1,0 +1,146 @@
+﻿@model OrderViewModel
+@*@model List<OrderViewModel>*@
+
+@{
+    ViewData["Title"] = "OrderDetails";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    <partial name="_BootstrapTablePartial" />
+}
+
+@section Search
+    {
+    <form asp-area="Admin" asp-controller="Reports" asp-action="OrderDetails" role="search">
+        <input type="text" placeholder="Search..." class="form-control" name="filter" style="color: white;">
+        <a href="#" onclick="this.closest('form').submit()">
+            <i class="fa fa-search"></i>
+        </a>
+    </form>
+}
+
+<div class="single-product-tab-area mg-b-30 text-white">
+    <!-- Single pro tab review Start-->
+    <div class="single-pro-review-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="review-tab-pro-inner">
+                        <h4>Order Details</h4>
+                        <table id="orderdetails" data-toggle="table" data-custom-sort="customSort">
+                            @if (Model != null && Model.OrderItems.Count == 0)
+                            {
+                                <caption class="text-center">
+                                    Không có dữ liệu
+                                </caption>
+                            }
+                            <thead class="text-center">
+                                <tr>
+
+                                    <th class="text-center" data-field="orderid" data-sortable="true">Order ID</th>
+                                    <th class="text-center" data-field="customername" data-sortable="true">Customer Name</th>
+                                    <th class="text-center" data-field="phone" data-sortable="true">Phone Number</th>
+                                    <th class="text-center" data-field="orderdate" data-sortable="true">Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center">@Model?.OrderId</td>
+                                    <td class="text-start">@Model?.CustomerName</td>
+                                    <td class="text-center">@Model?.PhoneNumber</td>
+                                    <td class="text-center">@Model?.OrderDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="myTabContent" class="tab-content custom-product-edit">
+                            <div class="product-tab-list tab-pane fade active in" id="description">
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                        <div class="review-content-section">
+                                            <h4>Order Items</h4>
+                                            <table id="orderitem" data-toggle="table" data-custom-sort="customSort">
+                                                <thead class="text-center">
+                                                    <tr>
+                                                        <th class="text-center" data-field="productname" data-sortable="true">Products</th>
+                                                        <th class="text-center" data-field="quantity" data-sortable="true">Quantity</th>
+                                                        <th class="text-center" data-field="price" data-sortable="true">Price</th>
+                                                       
+                                                        <th class="text-center" data-field="total" data-sortable="true">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null)
+                                                    {
+                                                        @foreach (var item in Model.OrderItems)
+                                                        {
+                                                            <tr>
+                                                                <td class="text-start"><img src="@item.ProductImage" alt="ProductImage" style="width: 50px;">@item.ProductName</td>
+                                                                <td class="text-center">@item.Quantity</td>
+                                                                <td class="text-start item-price" style="text-align: right;">
+                                                                    @item.Price.ToString("n0")<br>
+                                                                    @(item.Discount != 0 ? -item.Discount + "%" : "")
+                                                                </td>
+                                                                <td class="text-start item-total" style="text-align: right;">
+                                                                    @string.Format("{0:N0}", @item.Quantity * @item.Price)<br>
+                                                                    @(item.Discount != 0 ? string.Format("{0:N0}", (@item.Quantity * @item.Price * item.Discount) / 100) : "")
+
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="review-content-section">
+                                            <h5 class="position-relative text-uppercase"><span class="pr-3">Cart Summary</span></h5>
+                                            @if (Model != null)
+                                            {
+                                                <div class="p-30 mb-5">
+                                                    <div class="pb-2">
+                                                        <div class="d-flex justify-content-between mb-3">
+                                                            @{
+                                                                decimal subTotal = 0;
+                                                                decimal subTotalDiscount = 0;
+                                                                foreach (var item in Model.OrderItems)
+                                                                {
+                                                                    subTotal += item.Price * item.Quantity;
+                                                                    subTotalDiscount += (item.Price * item.Quantity * item.Discount) / 100;
+                                                                }
+                                                            }
+                                                            <h6>Sub Total</h6>
+                                                            <h6>@string.Format("{0:N0}",@subTotal)</h6>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="pb-2">
+                                                        <div class="d-flex justify-content-between mb-3">
+                                                            <h6>Subtotal Discount</h6>
+                                                            <h6 class="subtotaldiscount"> -@(subTotalDiscount != 0 ? subTotalDiscount.ToString("N0") : "")</h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="pt-2">
+                                                        <div class="d-flex justify-content-between mt-2">
+                                                            <h5>Total</h5>
+                                                            <h5 class="total">@string.Format("{0:N0}",@subTotal-@subTotalDiscount)</h5>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

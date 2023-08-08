@@ -1,0 +1,185 @@
+﻿@model IPagedList<Product>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutMultishop.cshtml";
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+}
+
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="d-flex justify-content-center align-items-center alert alert-danger">@errorMessage</div>
+}
+@if (TempData["Message"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center alert alert-success" ]">
+        @TempData["Message"]
+    </div>
+}
+
+<!-- Breadcrumb Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="breadcrumb-item text-dark" asp-area="" asp-controller="Shop" asp-action="Index">Shop</a>
+                <span class="breadcrumb-item active">Shop List</span>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<!-- Shop Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <!-- Shop Sidebar Start -->
+        <div class="col-lg-3 col-md-4">
+            <!-- Price Start -->
+
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by category</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <input type="text" id="categoryName" placeholder="Enter category name" value="@ViewBag.SelectedCategoryName" style="width: 100%;" />
+
+            </div>
+
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by price</span></h5>
+            <div class="bg-light p-4 mb-30">
+
+                <form>
+    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+        <input type="checkbox" class="custom-control-input price-filter" checked id="price-all" data-min-price="" data-max-price="">
+        <label class="custom-control-label" for="price-all">All Price</label>
+                        <span class="badge border font-weight-normal">@ViewData["AllPriceCount"]</span>
+    </div>
+    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+        <input type="checkbox" class="custom-control-input price-filter" id="price-1" data-min-price="0" data-max-price="1000000">
+        <label class="custom-control-label" for="price-1">0 - 1.000.000</label>
+                        <span class="badge border font-weight-normal">@ViewData["Price1Count"]</span>
+    </div>
+    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+        <input type="checkbox" class="custom-control-input price-filter" id="price-2" data-min-price="1000000" data-max-price="10000000">
+        <label class="custom-control-label" for="price-2">1.000.000 - 10.000.000</label>
+                        <span class="badge border font-weight-normal">@ViewData["Price2Count"]</span>
+    </div>
+    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+        <input type="checkbox" class="custom-control-input price-filter" id="price-3" data-min-price="10000000" data-max-price="50000000">
+                        <label class="custom-control-label" for="price-3">10.000.000 - 50.000.000</label>
+                        <span class="badge border font-weight-normal">@ViewData["Price3Count"]</span>
+                    </div>
+                </form>
+
+            </div>
+            <!-- Size End -->
+        </div>
+        <!-- Shop Sidebar End -->
+        <!-- Shop Product Start -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row pb-3">
+                <div class="col-12 pb-1">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
+                            <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
+                        </div>
+                        <div class="ml-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Sorting</button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" asp-action="Index" asp-route-sorting="isPro">Khuyến mãi</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-route-sorting="isNew">Mới nhất</a>
+                                    <a class="dropdown-item" asp-action="Index" asp-route-sorting="isSale">Bán chạy</a>
+                                </div>
+                            </div>
+
+                            <div class="btn-group ml-2">
+                                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Showing</button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="@Url.Action("Index", new { page = ViewBag.CurrentPage, pageSize = 6, filter = Context.Request.Query["filter"] })">6</a>
+                                    <a class="dropdown-item" href="@Url.Action("Index", new { page = ViewBag.CurrentPage, pageSize = 12, filter = Context.Request.Query["filter"] })">12</a>
+                                    <a class="dropdown-item" href="@Url.Action("Index", new { page = ViewBag.CurrentPage, pageSize = 36, filter = Context.Request.Query["filter"] })">36</a>
+                                    <a class="dropdown-item" href="@Url.Action("Index", new { page = ViewBag.CurrentPage, pageSize = int.MaxValue, filter = Context.Request.Query["filter"] })">All</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model != null)
+                {
+                    @foreach (var product in Model)
+                    {
+
+                        <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                            <div class="product-item bg-light mb-4">
+                                <div class="text-center py-4">
+
+                                    <a class="h6 text-decoration-none text-truncate" asp-controller="Details" asp-action="Index" asp-route-productId="@product.ProductId">
+                                        <img class="img-fluid w-100" src="@product.ProductImage" alt="ProductImage">
+                                        <div class="text-center py-4">
+                                            <span class="h6 text-decoration-none text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@product.ProductName</span>
+                                        </div>
+                                    </a>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <h5>@string.Format("{0:N0}", product.ProductPrice)</h5><h6 class="text-muted ml-2"><del>@string.Format("{0:N0}", product.ProductPrice)</del></h6>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+              
+                <div class="col-12">
+                    <nav>
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = ViewBag.PageSize, filter = Context.Request.Query["filter"] }), new PagedListRenderOptions { UlElementClasses = new[] { "pagination justify-content-center" }, LiElementClasses = new[] { "page-item" }, PageClasses = new[] { "page-link" } })
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- Shop Product End -->
+    </div>
+</div>
+<!-- Shop End -->
+<script>
+    $(document).ready(function () {
+        // Khi có sự kiện thay đổi trên các phần tử có class là "price-filter"
+        $(".price-filter").change(function () {
+            var minPrice = "";
+            var maxPrice = "";
+            // Duyệt qua các phần tử có class là "price-filter" và đang được chọn
+            $(".price-filter:checked").each(function () {
+                // Lấy giá trị của thuộc tính "data-min-price" và gán vào biến minPrice
+                minPrice = $(this).data("min-price");
+                maxPrice = $(this).data("max-price");
+            });
+            // Tạo một đối tượng URL từ địa chỉ hiện tại của trang web
+            var url = new URL(window.location.href);
+            // Thiết lập giá trị cho tham số "minPrice" và "maxPrice" trong URL
+            url.searchParams.set("minPrice", minPrice);
+            url.searchParams.set("maxPrice", maxPrice);
+            // Chuyển hướng đến địa chỉ mới được cập nhật
+            window.location.href = url.href;
+        });
+    });
+
+   
+    $(document).ready(function () {
+        // Đăng ký một sự kiện "input" cho phần tử có id là "categoryName"
+        $("#categoryName").on("input", function () {
+            // Lấy giá trị của phần tử có id là "categoryName"
+            var categoryName = $(this).val();
+            // Tạo một đối tượng URL từ địa chỉ hiện tại của trang web
+            var url = new URL(window.location.href);
+            // Thêm hoặc cập nhật tham số "categoryName" trong URL với giá trị mới
+            url.searchParams.set("categoryName", categoryName);
+            // Cập nhật địa chỉ của trang web với URL mới
+            window.location.href = url.href;
+        });
+    });
+
+</script>
+
+ 

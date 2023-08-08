@@ -1,0 +1,198 @@
+﻿@model List<OrderViewModel>
+@*@model IPagedList<OrderViewModel>*@
+@{
+    ViewData["Title"] = "OrderList";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    
+    <partial name="_BootstrapTablePartial" />
+    var totalRefund = Model != null ? Model.Where(o => o.Status == "Đã hủy").Sum(o => o.Total) : 0;
+    var total = Model != null ? Model.Sum(o => o.Total) : 0;
+    var subTotal = total - totalRefund;
+
+}
+
+@section Search
+    {
+    <form asp-area="Admin" asp-controller="Reports" asp-action="OrderList" role="search">
+        <input type="text" placeholder="Search..." class="form-control" name="filter" style="color: white;">
+        <a href="#" onclick="this.closest('form').submit()">
+            <i class="fa fa-search"></i>
+        </a>
+    </form>
+}
+
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                <div class="product-status-wrap">
+                    <h4>Order List</h4>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 text-white">
+                        <p class="d-flex justify-content-between mb-1">
+                                        <span>Tổng doanh thu các đơn hàng:</span>
+                            <span style="font-weight: bold;font-size: 16px;">@ViewBag.TotalRevenue.ToString("N0")</span>
+                                    </p>
+                        <p class="d-flex justify-content-between mb-1">
+                                        <span>Tổng doanh thu các đơn hàng bị hủy:</span>
+                            <span style="font-weight: bold;font-size: 16px;">-@ViewBag.TotalCanceledRevenue.ToString("N0")</span>
+                                    </p>
+                        <p class="d-flex justify-content-between mb-1">
+                                        <span>Tổng doanh thu thực các đơn hàng:</span>
+                            <span style="font-weight: bold;font-size: 16px;">@ViewBag.TotalRealRevenue.ToString("N0")</span>
+                                    </p>
+                                <br />
+                    </div>
+
+                    <table id="table" data-toggle="table" data-custom-sort="customSort">
+                        @if (Model != null && Model.Count == 0)
+                        {
+                            <caption class="text-center">
+                                Không có dữ liệu
+                            </caption>
+                        }
+                        <thead class="text-center">
+                            <tr>
+                                <th class="text-center" data-field="stt" data-sortable="true">STT</th>
+                                <th class="text-center" data-field="orderid" data-sortable="true">Order ID</th>
+                                <th class="text-center" data-field="customername" data-sortable="true">Customer Name</th>
+                                <th class="text-center" data-field="phone" data-sortable="true">Phone Number</th>
+
+                                <th class="text-center" data-field="orderdate" data-sortable="true">Order Date</th>
+                                <th class="text-center" data-field="orderdetail" data-sortable="true">Order Detail</th>
+                                <th class="text-center" data-field="status" data-sortable="true">Status</th>
+                                <th class="text-center" data-field="total" data-sortable="true">Total</th>
+                                @*Tạo cột ẩn để sort*@
+                                @*<th data-field="orderStatusId" data-visible="false">OrderStatusId</th>*@
+                                @*<th data-field="statusname" data-sortable="true" data-visible="false" style="display: none;">Status Name</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int i = 0;
+                                @foreach (var order in Model)
+                                {
+                                    i++;
+                                    <tr>
+                                        <td class="text-center">@i</td>
+                                        <td class="text-center">@order.OrderId</td>
+                                        <td class="text-start">@order.CustomerName</td>
+                                        <td class="text-center">@order.PhoneNumber</td>
+                                        <td class="text-center">@order.OrderDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        <td class="text-center"><a asp-area="Admin" asp-controller="Reports" asp-action="OrderDetails" asp-route-id="@order.OrderId">Xem chi tiết</a></td>
+                                        <form asp-area="Admin" asp-action="UpdateOrderStatus" asp-controller="Reports" method="post" id="updateOrderStatusForm-@order.OrderId">
+                                        <td class="text-center">
+                                            <select class="form-control text-white orderStatusSelect" data-order-id="@order.OrderId" name="orderStatusId">
+                                                    @foreach (var status in ViewBag.OrderStatuses)
+                                                    {
+                                                        if (status.OrderStatusId == order.OrderStatusId)
+                                                        {
+                                                        <option value="@status.OrderStatusId" selected>@status.OrderStatusName</option>
+                                                        }
+                                                        else
+                                                        {
+                                                        <option value="@status.OrderStatusId">@status.OrderStatusName</option>
+                                                        }
+                                                    }
+                                            </select>
+                                            <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        </td>
+                                        <td style="display: none;">
+                                            <input type="submit" value="@ViewBag.Statuses[order.OrderId]" />
+                                        </td>
+                                        </form>
+                                        <td class="text-center">@((order.Status == "Đã hủy" ? -order.Total : order.Total).ToString("n0"))</td>
+
+                                    </tr>
+                                }
+
+                            }
+                        </tbody>
+
+                        <tr style="font-weight: bold;font-size: 20px;">
+                            <td colspan="7" class="text-right">Total</td>
+                            <td class="text-center">@total.ToString("n0")</td>
+                        </tr>
+                        <tr style="font-weight: bold;font-size: 20px;">
+                            <td colspan="7" class="text-right">Total Refund</td>
+                            <td class="text-center">-@totalRefund.ToString("n0")</td>
+                        </tr>
+                        <tr style="font-weight: bold;font-size: 20px;">
+                            <td colspan="7" class="text-right">SubTotal</td>
+                            <td class="text-center">@subTotal.ToString("n0")</td>
+                        </tr>
+
+
+                    </table>
+
+                <div class="custom-pagination d-flex justify-content-between align-items-center">
+                        <div>
+                            <label for="pageSize" class="me-2" style="color: white;">Rows per page:</label>
+                            <select id="pageSize" class="form-select form-select-sm">
+                                <option value="5" selected>5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                @* <option value="All">All</option>*@
+                            </select>
+                        </div>
+
+                        <div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <li class="page-item @(ViewBag.Page == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("OrderList", new { page = ViewBag.Page - 1, pageSize = ViewBag.PageSize })">Previous</a>
+                                    </li>
+                                    @for (int i = 1; i <= ViewBag.PageCount; i++)
+                                    {
+                                        <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                                        <a class="page-link" href="@Url.Action("OrderList", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                                        </li>
+                                    }
+                                    <li class="page-item @(ViewBag.Page == ViewBag.PageCount ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("OrderList", new { page = ViewBag.Page + 1, pageSize = ViewBag.PageSize })">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.querySelectorAll(".orderStatusSelect").forEach(function (select) {
+        select.addEventListener("change", function () {
+            var orderId = this.getAttribute("data-order-id");
+            var colors = ["bg-success", "bg-dark", "bg-primary", "bg-info"];
+            select.classList.remove(...colors);
+            select.classList.add(colors[select.selectedIndex % colors.length]);
+            document.getElementById("updateOrderStatusForm-" + orderId).submit();
+        });
+    });
+    window.addEventListener("load", function () {
+        document.querySelectorAll(".orderStatusSelect").forEach(function (select) {
+            var colors = ["bg-success", "bg-dark", "bg-primary", "bg-info"];
+            select.classList.remove(...colors);
+            select.classList.add(colors[select.selectedIndex % colors.length]);
+        });
+    });
+    var pageSizeSelect = document.getElementById("pageSize");
+    pageSizeSelect.value = "@ViewBag.PageSize";
+    pageSizeSelect.addEventListener("change", function () {
+        var pageSize = this.value;
+        var url = new URL(window.location.href);
+        url.searchParams.set("pageSize", pageSize);
+        url.searchParams.set("page", 1);
+        window.location.href = url.toString();
+    });
+
+</script>
+

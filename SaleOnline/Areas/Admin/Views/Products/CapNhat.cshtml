@@ -1,0 +1,191 @@
+﻿@model Product
+@{
+    ViewData["Title"] = "CapNhat";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div class="single-product-tab-area mg-b-30">
+    <!-- Single pro tab review Start-->
+    <div class="single-pro-review-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="review-tab-pro-inner">
+                        <form asp-area="Admin" asp-controller="Products" asp-action="CapNhat" enctype="multipart/form-data" method="post">
+                            <div id="myTabContent" class="tab-content custom-product-edit">
+                                <div class="product-tab-list tab-pane fade active in" id="description">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="review-content-section">
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-new-file" aria-hidden="true"></i></span>
+                                                    <input type="text" class="form-control" id="productId" placeholder="Id" name="productId" value="@Model.ProductId" aria-describedby="text" style="background-color: #1b2a47;" readonly>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-edit" aria-hidden="true"></i></span>
+                                                    <input type="text" class="form-control" placeholder="Name" id="productName" name="productName" value="@(Model?.ProductName ?? "")" aria-describedby="text" oninvalid="this.setCustomValidity('Vui lòng nhập tên!')" oninput="this.setCustomValidity('')" required>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="fa fa-usd" aria-hidden="true"></i></span>
+
+                                                    <input type="number" class="form-control" placeholder="Price" id="productPrice" name="productPrice" value="@(Model?.ProductPrice != 0 ? Model?.ProductPrice?.ToString("0") : "")" aria-describedby="text" min="0">
+                                                </div>
+
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-picture" aria-hidden="true"></i></span>
+                                                    <input type="file" class="form-control" id="productImage" name="imageFile">
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(Model?.ProductImage))
+                                                {
+                                                    <img src="@Model?.ProductImage" alt="Product Image" width="50" height="50">
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="review-content-section">
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-favorites-button" aria-hidden="true"></i></span>
+                                                    <input type="text" class="form-control" placeholder="Description" id="productDes" name="productDes" value="@Model?.ProductDes" aria-describedby="text">
+                                                </div>
+
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-user" aria-hidden="true"></i></span>
+                                                    <select id="productUser" name="userId" class="form-control pro-edt-select form-control-primary">
+                                                        @foreach (var user in ViewBag.Users)
+                                                        {
+                                                            <option value="@user.UserId">@user.UserName</option>
+                                                        }
+                                                    </select>
+
+                                                </div>
+
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-like" aria-hidden="true"></i></span>
+                                                    <input list="productCategory" name="categoryName" class="form-control pro-edt-select form-control-primary" value="@TempData["SelectedCategoryName"]" onchange="updateCategoryId(this.value)">
+                                                    <datalist id="productCategory">
+                                                        @foreach (var category in ViewBag.Categories)
+                                                        {
+                                                            <option>@category.CategoryName</option>
+                                                        }
+                                                    </datalist>
+                                                    <input type="hidden" name="categoryId" id="categoryId">
+                                                   
+                                                </div>
+
+                                                <div class="input-group mg-b-pro-edt">
+                                                    <span class="input-group-addon"><i class="icon nalika-favorites" aria-hidden="true"></i></span>
+                                                    <input list="productPromotion" name="discount" class="form-control pro-edt-select form-control-primary" value="@TempData["SelectedPromotionName"]" onchange="updatePromotionId(this.value)">
+                                                    <datalist id="productPromotion">
+                                                        @foreach (var promotion in ViewBag.Promotions)
+                                                        {
+                                                            <option>@promotion.Discount%</option>
+                                                        }
+                                                    </datalist>
+                                                    <input type="hidden" name="promotionId" id="promotionId">
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt form-check">
+                                                    <input class="form-check-input" type="checkbox" @(Model?.IsNew == true ? "checked" : "") name="isnew" id="isnew">
+                                                    <label class="form-check-label" for="isnew">New </label>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt form-check">
+                                                    <input class="form-check-input" type="checkbox" @(Model?.IsSale == true ? "checked" : "") name="issale" id="issale">
+                                                    <label class="form-check-label" for="issale">Hot Sale </label>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt form-check">
+                                                    <input class="form-check-input" type="checkbox" @(Model?.IsPro == true ? "checked" : "") name="ispro" id="ispro">
+                                                    <label class="form-check-label" for="ispro">Promotion </label>
+                                                </div>
+                                                <div class="input-group mg-b-pro-edt form-check">
+                                                    <input class="form-check-input" type="checkbox" @(Model?.IsActive == true ? "checked" : "") name="kichhoat" id="kichhoat">
+                                                    <label class="form-check-label" for="kichhoat">Kích hoạt </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="text-center custom-pro-edt-ds">
+                                                <button type="submit" id="themgiohang" class="btn btn-ctl-bt waves-effect waves-light m-r-10">
+                                                    Save
+                                                </button>
+                                                <button type="reset" class="btn btn-ctl-bt waves-effect waves-light" value="Reset">
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var lastSelectedUserId = "@Model?.UserId";
+    document.getElementById("userId").value = lastSelectedUserId;
+    function updateUserId(userName) {
+        var userIds = @Html.Raw(Json.Serialize(ViewBag.UserIds));
+        if (userIds.hasOwnProperty(userName)) {
+            var userId = userIds[userName];
+            lastSelectedUserId = userId;
+            document.getElementById("userId").value = userId;
+        } else {
+            if (userName) {
+                var modalMessage = "Tài khoản không nằm trong danh sách! Bạn vui lòng nhập lại!";
+                document.getElementById("modalMessage").textContent = modalMessage;
+                $('#myModal').modal('show');
+                document.getElementById("userId").value = null;
+            } else {
+                document.getElementById("userId").value = null;
+            }
+        }
+    }
+
+    var lastSelectedPromotionId = "@Model?.PromotionId";
+    document.getElementById("promotionId").value = lastSelectedPromotionId;
+    function updatePromotionId(discount) {
+        discount = discount.replace('%', '');
+        var promotionIds = @Html.Raw(Json.Serialize(ViewBag.PromotionIds));
+        if (promotionIds.hasOwnProperty(discount)) {
+            var promotionId = promotionIds[discount];
+            lastSelectedPromotionId = promotionId;
+            document.getElementById("promotionId").value = promotionId;
+        } else {
+            if (discount) {
+                var modalMessage = "Khuyến mãi không nằm trong danh sách! Bạn vui lòng nhập lại!";
+                document.getElementById("modalMessage").textContent = modalMessage;
+                $('#myModal').modal('show');
+                document.getElementById("promotionId").value = null;
+            } else {
+                document.getElementById("promotionId").value = null;
+            }
+        }
+    }
+
+    var lastSelectedCategoryId = "@Model?.CategoryId";
+    document.getElementById("categoryId").value = lastSelectedCategoryId;
+    function updateCategoryId(categoryName) {
+        var categoryIds = @Html.Raw(Json.Serialize(ViewBag.CategoryIds));
+        if (categoryIds.hasOwnProperty(categoryName)) {
+            var categoryId = categoryIds[categoryName];
+            lastSelectedCategoryId = categoryId;
+            document.getElementById("categoryId").value = categoryId;
+        } else {
+            if (categoryName) {
+                var modalMessage = "Danh mục không nằm trong danh sách! Bạn vui lòng nhập lại!";
+                document.getElementById("modalMessage").textContent = modalMessage;
+                $('#myModal').modal('show');
+                document.getElementById("categoryId").value = null;
+            } else {
+                document.getElementById("categoryId").value = null;
+            }
+        }
+    }
+</script>
+
+
+

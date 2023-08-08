@@ -1,0 +1,101 @@
+﻿@model IPagedList<Category>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    <partial name="_BootstrapTablePartial" />
+}
+
+@section Search
+{
+    <form asp-area="Admin" asp-controller="Categories" asp-action="Index" role="search">
+        <input type="text" placeholder="Search..." class="form-control" name="filter" style="color: white;">
+        <a href="#" onclick="this.closest('form').submit()">
+            <i class="fa fa-search"></i>
+        </a>
+    </form>
+}
+
+<div class="product-status mg-b-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="product-status-wrap">
+                    <h4>Categories List</h4>
+                    <div class="add-product">
+                        <a href="#" onclick="document.getElementById('hidden-form').submit()">Add</a>
+                    </div>
+                    <form id="hidden-form" asp-area="Admin" asp-controller="Categories" asp-action="Them" method="post" style="display: none;">
+                    </form>
+                    <table id="table" data-toggle="table" data-custom-sort="customSort">
+                        @if (Model != null && Model.Count == 0)
+                        {
+                            <caption class="text-center">
+                                Không có dữ liệu
+                            </caption>
+                        }
+                        <thead class="text-center">
+                            <tr>
+                                <th class="text-center" data-field="stt" data-sortable="true">STT</th>
+                                <th class="text-center" data-field="name" data-sortable="true">Name</th>
+                                <th class="text-center" data-field="status" data-sortable="true">Status</th>
+                                @*Tạo cột ẩn để sort*@
+                                <th data-field="isActive" data-visible="false">IsActive</th>
+                                <th class="text-center">Setting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int count = ViewBag.ItemCount;
+                                @foreach (var category in Model)
+                                {
+                                    <tr id="@(category.CategoryId == ViewBag.TickId ? "tickRow" : "")">
+                                        <td class="text-center">@count</td>
+                                        <td class="text-start">@category.CategoryName</td>
+                                        <td class="text-center">
+                                            <form asp-area="Admin" asp-controller="Categories" asp-action="StatusUpdate" asp-route-categoryId="@category.CategoryId" method="post">
+                                                <button type="submit" class="@(category.IsActive == true ? "pd-setting" : "ds-setting")">@((category.IsActive == true) ? "Kích hoạt" : (category.IsActive == false) ? "Tạm khóa" : "Lỗi")</button>
+                                            </form>
+                                        </td>
+                                        <td>@category.IsActive</td>
+                                        <td class="text-center">
+                                            <a asp-area="Admin" asp-controller="Categories" asp-action="CapNhat" asp-route-categoryId="@category.CategoryId" class="pd-setting-ed" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="px-2 delete-button" href="@(category.IsActive == true ? Url.Action("Xoa", "Categories", new { area = "Admin", categoryId = category.CategoryId }) : $"#deleteModal_{count}")" data-toggle="@(category.IsActive == true ? "" : "modal")" data-target="@(category.IsActive == true ? "" : $"#deleteModal_{count}")">
+                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                            </a>
+                                            <div class="modal fade" id="deleteModal_@count" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content text-white" style="background-color: #152036;">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Xác nhận</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" style="font-size: 18px;">
+                                                            Bạn có chắc chắn muốn xóa không?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                            <a asp-area="Admin" asp-controller="Categories" asp-action="Xoa" asp-route-categoryId="@category.CategoryId" class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <partial name="_Paging" model="Model" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,44 @@
+﻿@model object
+
+<div class="custom-pagination d-flex justify-content-between align-items-center">
+<div>
+    <label for="pageSize" class="me-2" style="color: white;">Rows per page:</label>
+    <select id="pageSize" class="form-select form-select-sm">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="All">All</option>
+    </select>
+</div>
+    @*1. Tạo URL có kích thước trang là ViewBag.PageSize và bộ lọc là Context.Request.Query["filter"]
+    2. Tạo đối tượng PagedListRenderOptions để cấu hình cách hiển thị của phân trang: UlElementClasses, LiElementClasses và PageClasses là các thuộc tính cho phép thêm class cho các phần tử <ul>, <li> và <a> trong phân trang.
+    - new[] { "page-item" } là một mảng chứa một phần tử là chuỗi "page-item". Mảng này được sử dụng để thêm class "page-item" cho các phần tử <li> trong phân trang.
+    - new[] { "page-link" } là một mảng chứa một phần tử là chuỗi "page-link". Mảng này được sử dụng để thêm class "page-link" cho các phần tử <a> trong phân trang.*@
+    @if (Model is IPagedList)
+{
+    var pagedList = Model as IPagedList;
+    @Html.PagedListPager(pagedList, page => Url.Action("Index", new { page, pageSize = ViewBag.PageSize, filter = Context.Request.Query["filter"] }), new PagedListRenderOptions { UlElementClasses = new[] { "pagination" }, LiElementClasses = new[] { "page-item" }, PageClasses = new[] { "page-link" } })
+}
+</div>
+<script>
+    var pageSize = '@ViewBag.PageSize';
+    if (pageSize === '2147483647') {
+        pageSize = 'All';
+    }
+    // Đặt giá trị của phần tử HTML có id là 'pageSize' thành giá trị của biến pageSize
+    $('#pageSize').val(pageSize);
+    // Thêm sự kiện 'change' cho phần tử HTML có id là 'pageSize'
+    $('#pageSize').on('change', function () {
+        // Lấy giá trị mới của phần tử HTML
+        var pageSize = $(this).val();
+        if (pageSize === 'All') {
+            pageSize = 2147483647;
+        }
+        // Tạo URL mới và thêm tham số pageSize vào cuối URL
+        var url = '@Url.Action("Index", new { page = 1, filter = Context.Request.Query["filter"] })';
+        url += '&pageSize=' + pageSize;
+        // Chuyển hướng trình duyệt đến URL mới
+        window.location.href = url;
+    });
+</script>

@@ -1,0 +1,20 @@
+﻿@model List<Product>
+
+@foreach (var product in Model)
+{
+    <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+        <div class="product-item bg-light mb-4">
+            <div class="text-center py-4">
+                <a class="h6 text-decoration-none text-truncate" asp-controller="Details" asp-action="Index" asp-route-productId="@product.ProductId">
+                    <img class="img-fluid w-100" src="@product.ProductImage" alt="ProductImage">
+                    <div class="text-center py-4">
+                        <span class="h6 text-decoration-none text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@product.ProductName</span>
+                    </div>
+                </a>
+                <div class="d-flex align-items-center justify-content-center mt-2">
+                    <h5>@string.Format("{0:N0}", product.ProductPrice)</h5><h6 class="text-muted ml-2"><del>@string.Format("{0:N0}", product.ProductPrice)</del></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+}
